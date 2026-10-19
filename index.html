@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giáo viên siêu đẳng</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #f5f7fb; color: #1e293b; min-height: 100vh; }
+    .app { max-width: 1200px; margin: 0 auto; padding: 24px 20px 48px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .hero { text-align: center; margin-bottom: 40px; }
+    .hero h1 {
+      font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #0f2b5e, #1e4b8a);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 8px;
+    }
+    .hero .subhead { font-size: 1.1rem; color: #334155; margin-bottom: 6px; }
+    .hero .desc {
+      font-size: 0.95rem; color: #475569; max-width: 640px; margin: 0 auto;
+      background: #eef2f6; padding: 10px 18px; border-radius: 40px; display: inline-block;
+    }
+
+    .section-title {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin: 32px 0 18px; flex-wrap: wrap; gap: 12px;
+    }
+    .section-title h2 { font-size: 1.6rem; font-weight: 700; color: #0b2b4f; display: flex; align-items: center; gap: 10px; }
+    .section-title h2 i { color: #f59e0b; }
+
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+    .tool-card {
+      background: white; border-radius: 28px; padding: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9eef3;
+      transition: all 0.2s ease; display: flex; flex-direction: column; cursor: pointer;
+    }
+    .tool-card:hover {
+      border-color: #b9c8dd; box-shadow: 0 18px 30px -10px rgba(0,35,70,0.15); transform: translateY(-4px);
+    }
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+    .tool-icon {
+      font-size: 2.2rem; width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      background: #f1f5f9; border-radius: 18px;
+    }
+    .badge {
+      font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 40px;
+      text-transform: uppercase; letter-spacing: 0.02em;
+    }
+    .badge-new { background: #fee2e2; color: #b91c1c; }
+    .badge-featured { background: #fef3c7; color: #b45309; }
+    .tool-card h3 { font-size: 1.35rem; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+    .tool-desc { font-size: 0.9rem; color: #52637a; margin-bottom: 20px; flex: 1; }
+    .btn-start {
+      background: #1e4b8a; color: white; border: none; padding: 10px 22px;
+      border-radius: 40px; font-size: 0.9rem; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+      transition: background 0.15s; align-self: flex-start;
+    }
+    .btn-start:hover { background: #123768; }
+
+    .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .btn-back {
+      background: white; color: #1e4b8a; border: 1px solid #cbd5e1;
+      padding: 9px 18px; border-radius: 40px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.15s;
+    }
+    .btn-back:hover { background: #f1f5f9; border-color: #94a3b8; }
+    .page-header h2 { font-size: 1.7rem; font-weight: 700; color: #0b2b4f; display: flex; align-items: center; gap: 10px; }
+    .page-header h2 i { color: #f59e0b; }
+
+    .panel {
+      background: white; border-radius: 28px; border: 1px solid #e2e8f0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02); padding: 28px;
+      max-width: 900px; margin: 0 auto;
+    }
+    .panel.wide { max-width: 100%; }
+
+    button {
+      background: #1e4b8a; border: 1px solid #1e4b8a; color: white; font-weight: 600;
+      padding: 10px 20px; border-radius: 40px; cursor: pointer; font-size: 0.9rem;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    button:hover { background: #123768; border-color: #123768; }
+    button:active { transform: scale(0.97); }
+    button:disabled { opacity: 0.5; pointer-events: none; }
+    button.secondary { background: white; color: #1e4b8a; border: 1px solid #cbd5e1; }
+    button.secondary:hover { background: #f1f5f9; border-color: #94a3b8; }
+    button.small { padding: 7px 15px; font-size: 0.8rem; }
+
+    .mode-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px;
+      background: #f1f5f9; padding: 6px; border-radius: 50px;
+    }
+    .mode-tab {
+      flex: 1; min-width: 140px; background: transparent; border: none;
+      color: #52637a; font-weight: 600; padding: 12px 16px; border-radius: 50px;
+      cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.15s;
+    }
+    .mode-tab:hover { background: rgba(255,255,255,0.6); }
+    .mode-tab.active { background: white; color: #1e4b8a; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+    .mode-content { display: none; }
+    .mode-content.active { display: block; }
+
+    .name-input-area textarea {
+      width: 100%; padding: 14px 16px; border-radius: 18px; border: 1px solid #d1d9e6;
+      font-size: 0.9rem; resize: vertical; min-height: 120px; margin-bottom: 12px;
+      background: #fafcff; font-family: inherit;
+    }
+    .name-input-area textarea:focus {
+      outline: none; border-color: #1e4b8a; box-shadow: 0 0 0 3px rgba(30,75,138,0.1);
+    }
+    .name-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+
+    .result-display {
+      background: #f0f4fa; border-radius: 22px; padding: 28px 16px; text-align: center;
+      margin-top: 8px; min-height: 140px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .result-name {
+      font-size: 2.4rem; font-weight: 800; color: #0b2b4f; line-height: 1.2;
+      word-break: break-word; transition: transform 0.15s;
+    }
+    .result-hint { color: #7e8b9c; font-size: 0.85rem; margin-top: 6px; }
+    .pool-info { display: flex; justify-content: space-between; font-size: 0.85rem; color: #52637a; margin-top: 12px; }
+
+    .race-info {
+      display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+      justify-content: space-between; margin-bottom: 16px;
+    }
+    .race-info .hint { font-size: 0.85rem; color: #52637a; }
+    .race-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ===== ĐUA VỊT (giữ nguyên) ===== */
+    .racetrack {
+      background: #eef6ff; border-radius: 22px; padding: 16px 14px;
+      border: 2px dashed #b9d4f0; position: relative; overflow-x: auto;
+    }
+    .lane {
+      display: flex; align-items: center; gap: 12px; padding: 7px 0;
+      min-width: 480px;
+    }
+    .lane-label {
+      width: 130px; font-size: 0.85rem; font-weight: 600; color: #1e3a5f;
+      text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lane-track {
+      flex: 1; position: relative; height: 34px;
+      background: repeating-linear-gradient(90deg, #fff 0 28px, #e2eefb 28px 56px);
+      border-radius: 40px; border: 1px solid #d6e4f5; min-width: 280px;
+    }
+    .runner {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      font-size: 1.5rem; transition: left 0.12s linear; left: 2%;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+    }
+    .lane.finished .runner { animation: bounce 0.4s ease infinite alternate; }
+    @keyframes bounce { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -55%) scale(1.15); } }
+    .lane.finished .lane-track { background: #dcfce7; border-color: #86efac; }
+
+    .finish-flag {
+      position: absolute; right: 0; top: 0; bottom: 0; width: 8px;
+      background: repeating-linear-gradient(45deg, #111 0 6px, #fff 6px 12px);
+      border-radius: 0 40px 40px 0;
+    }
+    .duck-symbol { font-size: 1.6rem; line-height: 1; }
+
+    /* ===== ĐUA BI (dọc + chướng ngại vật) ===== */
+    .ball-arena {
+      position: relative; width: 100%; height: 520px;
+      background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 100%);
+      border-radius: 22px; overflow: hidden;
+      border: 2px dashed #b9d4f0;
+    }
+    .ball-arena canvas {
+      display: block; width: 100%; height: 100%;
+    }
+    .ball-legend {
+      display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem;
+      color: #52637a; margin-top: 10px;
+    }
+    .ball-legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .legend-dot {
+      display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+    }
+
+    .winner-banner {
+      margin-top: 18px; background: #fef9c3; border: 1px solid #fde047;
+      border-radius: 18px; padding: 14px 20px; text-align: center;
+      font-size: 1.1rem; font-weight: 700; color: #854d0e; display: none;
+    }
+    .winner-banner.show { display: block; }
+
+    /* ===== QUẢN LÝ LỚP ===== */
+    .mic-status { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .status-badge {
+      padding: 6px 14px; border-radius: 40px; font-size: 0.8rem; font-weight: 600;
+      background: #e2e8f0; color: #334155;
+    }
+    .status-badge.active { background: #dcfce7; color: #166534; }
+    .volume-container {
+      background: #f1f5f9; border-radius: 40px; height: 26px; width: 100%;
+      overflow: hidden; margin: 14px 0; border: 1px solid #e2e8f0;
+    }
+    .volume-bar { height: 100%; width: 0%; background: #1e4b8a; border-radius: 40px; transition: width 0.08s linear; }
+    .volume-bar.danger { background: #dc2626; }
+    .threshold-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 16px 0; font-size: 0.9rem; }
+    .threshold-row input[type="range"] { flex: 1; min-width: 160px; accent-color: #1e4b8a; }
+    .dragon-area {
+      font-size: 4rem; text-align: center; margin: 16px 0 8px;
+      transition: transform 0.2s, filter 0.2s; filter: grayscale(0.2);
+    }
+    .dragon-area.awake { filter: grayscale(0); transform: scale(1.1); }
+    .alert-count { font-weight: 600; color: #b45309; }
+    .divider { height: 1px; background: #eef2f6; margin: 18px 0; }
+
+    .footer-note {
+      margin-top: 44px; text-align: center; font-size: 0.8rem; color: #94a3b8;
+      border-top: 1px solid #e2e8f0; padding-top: 22px;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .panel { padding: 20px; }
+      .result-name { font-size: 1.8rem; }
+      .lane-label { width: 90px; font-size: 0.75rem; }
+      .ball-arena { height: 420px; }
+    }
+  </style>
+</head>
+<body>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="app">
+
+  <!-- ================= TRANG CHỦ ================= -->
+  <div id="page-home" class="page active">
+    <div class="hero">
+      <h1>Giáo Viên Siêu Đẳng</h1>
+      <div class="subhead">Trò chơi dạy học siêu đỉnh!</div>
+      <div class="desc">Nền tảng đơn giản để giảng dạy học sinh vơi các công cụ cơ bản</div>
+    </div>
+
+    <div class="section-title">
+      <h2><i class="fas fa-tools"></i> Các Công Cụ Dạy Học</h2>
+      <span style="color:#7e8b9c;font-size:0.85rem;">2 công cụ</span>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card" onclick="navigateTo('goi-ten')">
+        <div class="card-header">
+          <div class="tool-icon">🎡</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="badge badge-new">MỚI</span>
+            <span class="badge badge-featured">⭐ Nổi bật</span>
+          </div>
+        </div>
+        <h3>Gọi Tên "ran-dum"</h3>
+        <div class="tool-desc">
+          Vòng quay, đua vịt, đua bi.
+        </div>
+        <button class="btn-start"><i class="fas fa-play"></i> Chơi thôi!</button>
+      </div>
+
+      <div class="tool-card" onclick="navigateTo('quan-ly-lop')">
+        <div class="card-header">
+          <div class="tool-icon">🐉</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="badge badge-new">MỚI</span>
+          </div>
+        </div>
+        <h3>Rồng Ngủ Trật Tự</h3>
+        <div class="tool-desc">
+          Con rồng ngủ trong lớp yên tĩnh, thức giấc khi ồn ào — trò chơi quản lý lớp học thú vị bằng microphone.
+        </div>
+        <button class="btn-start"><i class="fas fa-play"></i> [phải cho phép bật mic] Chơi!</button>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <i class="fas fa-chalkboard-teacher"></i> Nền tảng tham khảo từ trang web Giáo Viên Đổi Mới
+    </div>
+  </div>
+
+  <!-- ================= TRANG GỌI TÊN NGẪU NHIÊN ================= -->
+  <div id="page-goi-ten" class="page">
+    <div class="page-header">
+      <button class="btn-back" onclick="navigateTo('home')"><i class="fas fa-arrow-left"></i> Quay về</button>
+      <h2><i class="fas fa-dice"></i> Gọi Tên "Ran-dum"</h2>
+    </div>
+
+    <div class="panel wide">
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="simple"><i class="fas fa-random"></i> Hiện số</button>
+        <button class="mode-tab" data-mode="duck"><i class="fas fa-kiwi-bird"></i> Đua Vịt 🦆</button>
+        <button class="mode-tab" data-mode="ball"><i class="fas fa-circle"></i> Đua Bi 🔵</button>
+      </div>
+
+      <div class="name-input-area">
+        <textarea id="nameListInput" placeholder="Mỗi dòng một tên học sinh...&#10;Ví dụ:&#10;Nguyễn Văn An&#10;Trần Thị Bình&#10;Lê Hoàng Cường"></textarea>
+        <div class="name-actions">
+          <button id="loadSampleBtn" class="secondary small"><i class="fas fa-list"></i> Tải mẫu</button>
+          <button id="clearNamesBtn" class="secondary small"><i class="fas fa-trash"></i> Xóa hết</button>
+          <span style="margin-left:auto;font-size:0.85rem;color:#52637a;align-self:center;">
+            Tổng: <strong id="totalNames">0</strong> · Đã gọi: <strong id="calledCount">0</strong>
+          </span>
+        </div>
+      </div>
+
+      <!-- CHẾ ĐỘ 1: RÚT THĂM -->
+      <div class="mode-content active" id="mode-simple">
+        <button id="pickNameBtn" style="width:100%; padding:15px; font-size:1rem;">
+          <i class="fas fa-random"></i> Gọi tên ngẫu nhiên
+        </button>
+        <div class="result-display">
+          <div class="result-name" id="resultName">—</div>
+          <div class="result-hint" id="resultHint">Nhấn nút để chọn</div>
+        </div>
+        <div style="margin-top:14px;">
+          <button id="resetPoolBtn" class="secondary small" style="width:100%;">
+            <i class="fas fa-undo-alt"></i> Đặt lại danh sách đã gọi
+          </button>
+        </div>
+      </div>
+
+      <!-- CHẾ ĐỘ 2: ĐUA VỊT (giữ nguyên) -->
+      <div class="mode-content" id="mode-duck">
+        <div class="race-info">
+          <div class="hint"><i class="fas fa-info-circle"></i> Mỗi bạn là một chú vịt 🦆. Nhấn "Bắt đầu đua" để cả lớp cùng chạy về đích!</div>
+          <div class="race-actions">
+            <button id="startDuckRace" class="small"><i class="fas fa-flag-checkered"></i> Bắt đầu đua</button>
+            <button id="resetDuckRace" class="secondary small"><i class="fas fa-undo-alt"></i> Đặt lại</button>
+          </div>
+        </div>
+        <div class="racetrack" id="duckTrack"></div>
+        <div class="winner-banner" id="duckWinner"></div>
+      </div>
+
+      <!-- CHẾ ĐỘ 3: ĐUA BI (dọc + chướng ngại vật) -->
+      <div class="mode-content" id="mode-ball">
+        <div class="race-info">
+          <div class="hint"><i class="fas fa-info-circle"></i> Mỗi bạn là một viên bi 🔵 rơi từ trên cao xuống. Các viên bi phải né chướng ngại vật (khối xám) để về đích!</div>
+          <div class="race-actions">
+            <button id="startBallRace" class="small"><i class="fas fa-flag-checkered"></i> Bắt đầu đua</button>
+            <button id="resetBallRace" class="secondary small"><i class="fas fa-undo-alt"></i> Đặt lại</button>
+          </div>
+        </div>
+        <div class="ball-arena">
+          <canvas id="ballCanvas"></canvas>
+        </div>
+        <div class="ball-legend">
+          <span><span class="legend-dot" style="background:#2563eb;"></span> Bi của bạn</span>
+          <span><span class="legend-dot" style="background:#94a3b8;"></span> Chướng ngại vật</span>
+          <span><span class="legend-dot" style="background:#22c55e;"></span> Đích đến</span>
+          <span><i class="fas fa-trophy" style="color:#eab308;"></i> Ai chạm đích đầu tiên thắng</span>
+        </div>
+        <div class="winner-banner" id="ballWinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TRANG QUẢN LÝ LỚP ================= -->
+  <div id="page-quan-ly-lop" class="page">
+    <div class="page-header">
+      <button class="btn-back" onclick="navigateTo('home')"><i class="fas fa-arrow-left"></i> Quay về</button>
+      <h2><i class="fas fa-dragon"></i> Rồng Ngủ · Quản Lý Lớp</h2>
+    </div>
+
+    <div class="panel">
+      <p style="color:#52637a; font-size:0.9rem; margin-bottom:14px;">
+        Sử dụng microphone để đo âm lượng lớp học. Khi vượt ngưỡng, rồng sẽ thức giấc.
+      </p>
+
+      <div class="mic-status">
+        <span id="micStatusBadge" class="status-badge">Chưa bật mic</span>
+        <button id="startMicBtn" class="small"><i class="fas fa-microphone"></i> Bật microphone</button>
+        <button id="stopMicBtn" class="secondary small" disabled><i class="fas fa-stop"></i> Dừng</button>
+      </div>
+
+      <div class="dragon-area" id="dragonEmoji">🐉💤</div>
+
+      <div class="volume-container">
+        <div class="volume-bar" id="volumeBar" style="width:0%;"></div>
+      </div>
+
+      <div class="threshold-row">
+        <span><i class="fas fa-sliders-h"></i> Ngưỡng:</span>
+        <input type="range" id="thresholdSlider" min="10" max="100" value="45" step="1">
+        <span id="thresholdValue">45%</span>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; margin-top:8px;">
+        <span><i class="fas fa-bell"></i> Số lần thức giấc: <span id="alertCount" class="alert-count">0</span></span>
+        <button id="resetAlertBtn" class="secondary small"><i class="fas fa-redo-alt"></i> Đặt lại</button>
+      </div>
+
+      <div class="divider"></div>
+      <p style="font-size:0.8rem; color:#7e8b9c;">
+        <i class="fas fa-info-circle"></i> Khi âm lượng vượt ngưỡng, rồng thức giấc và đếm số lần. Nhấn "Đặt lại" để bắt đầu phiên mới.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============================================================
+  // ĐIỀU HƯỚNG TRANG
+  // ============================================================
+  const PAGES = ['home', 'goi-ten', 'quan-ly-lop'];
+
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + pageId);
+    if (target) target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (pageId !== 'quan-ly-lop' && window.__stopMicIfActive) window.__stopMicIfActive();
+    if (pageId !== 'goi-ten' && window.__stopAllRaces) window.__stopAllRaces();
+  }
+
+  function navigateTo(pageId) {
+    if (!PAGES.includes(pageId)) pageId = 'home';
+    if (location.hash !== '#/' + pageId) location.hash = '#/' + pageId;
+    else showPage(pageId);
+  }
+
+  function handleHash() {
+    const hash = location.hash.replace('#/', '') || 'home';
+    showPage(PAGES.includes(hash) ? hash : 'home');
+  }
+
+  window.addEventListener('hashchange', handleHash);
+  window.addEventListener('DOMContentLoaded', handleHash);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') handleHash();
+
+  // ============================================================
+  // DỮ LIỆU TÊN DÙNG CHUNG
+  // ============================================================
+  const SAMPLE_NAMES = [
+    'Nguyễn Văn An', 'Trần Thị Bình', 'Lê Hoàng Cường', 'Phạm Thu Dung',
+    'Hoàng Minh Đức', 'Vũ Thị Hằng', 'Đặng Quốc Huy', 'Bùi Thanh Lan',
+    'Ngô Tuấn Kiệt', 'Đỗ Thị Mai', 'Trịnh Văn Nam', 'Lý Thị Oanh'
+  ];
+
+  let calledSet = new Set();
+
+  function getNames() {
+    const nameInput = document.getElementById('nameListInput');
+    if (!nameInput) return [];
+    const raw = nameInput.value;
+    const lines = raw.split('\n').map(s => s.trim()).filter(s => s !== '');
+    const seen = new Set();
+    const unique = [];
+    for (const name of lines) {
+      const key = name.toLowerCase();
+      if (!seen.has(key)) { seen.add(key); unique.push(name); }
+    }
+    return unique;
+  }
+
+  function updateStats() {
+    const names = getNames();
+    const totalSpan = document.getElementById('totalNames');
+    const calledSpan = document.getElementById('calledCount');
+    if (totalSpan) totalSpan.textContent = names.length;
+    if (calledSpan) {
+      const currentCalled = [...calledSet].filter(n => names.includes(n)).length;
+      calledSpan.textContent = currentCalled;
+    }
+  }
+
+  // ============================================================
+  // TAB CHỌN CHẾ ĐỘ
+  // ============================================================
+  (function() {
+    const tabs = document.querySelectorAll('.mode-tab');
+    const contents = {
+      simple: document.getElementById('mode-simple'),
+      duck: document.getElementById('mode-duck'),
+      ball: document.getElementById('mode-ball')
+    };
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        Object.values(contents).forEach(c => c && c.classList.remove('active'));
+        const mode = tab.dataset.mode;
+        if (contents[mode]) contents[mode].classList.add('active');
+        // Nếu chuyển sang đua bi, vẽ lại canvas
+        if (mode === 'ball' && window.__drawBallCanvas) {
+          setTimeout(() => window.__drawBallCanvas(), 50);
+        }
+      });
+    });
+  })();
+
+  // ============================================================
+  // 1. RÚT THĂM ĐƠN GIẢN
+  // ============================================================
+  (function() {
+    const pickBtn = document.getElementById('pickNameBtn');
+    const resultName = document.getElementById('resultName');
+    const resultHint = document.getElementById('resultHint');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
+    const clearNamesBtn = document.getElementById('clearNamesBtn');
+    const resetPoolBtn = document.getElementById('resetPoolBtn');
+    const nameInput = document.getElementById('nameListInput');
+
+    if (!pickBtn) return;
+
+    function resetDisplay() {
+      resultName.textContent = '—';
+      resultHint.textContent = 'Nhấn nút để chọn';
+    }
+
+    pickBtn.addEventListener('click', () => {
+      const names = getNames();
+      if (names.length === 0) {
+        resultName.textContent = '—';
+        resultHint.textContent = 'Chưa có tên nào trong danh sách';
+        return;
+      }
+      const available = names.filter(n => !calledSet.has(n));
+      if (available.length === 0) {
+        resultName.textContent = '🎉';
+        resultHint.textContent = 'Tất cả đã được gọi! Nhấn "Đặt lại" để bắt đầu vòng mới.';
+        return;
+      }
+      const chosen = available[Math.floor(Math.random() * available.length)];
+      calledSet.add(chosen);
+      resultName.textContent = chosen;
+      resultHint.textContent = 'Đã gọi · ' + calledSet.size + ' bạn';
+      updateStats();
+      resultName.style.transform = 'scale(1.1)';
+      setTimeout(() => { resultName.style.transform = 'scale(1)'; }, 150);
+    });
+
+    loadSampleBtn.addEventListener('click', () => {
+      nameInput.value = SAMPLE_NAMES.join('\n');
+      calledSet.clear();
+      resetDisplay();
+      updateStats();
+      if (window.__rebuildDuck) window.__rebuildDuck();
+      if (window.__rebuildBall) window.__rebuildBall();
+    });
+
+    clearNamesBtn.addEventListener('click', () => {
+      nameInput.value = '';
+      calledSet.clear();
+      resetDisplay();
+      updateStats();
+      if (window.__rebuildDuck) window.__rebuildDuck();
+      if (window.__rebuildBall) window.__rebuildBall();
+    });
+
+    resetPoolBtn.addEventListener('click', () => {
+      calledSet.clear();
+      resetDisplay();
+      updateStats();
+    });
+
+    nameInput.addEventListener('input', () => {
+      updateStats();
+      if (window.__rebuildDuck) window.__rebuildDuck();
+      if (window.__rebuildBall) window.__rebuildBall();
+    });
+
+    resetDisplay();
+    updateStats();
+  })();
+
+  // ============================================================
+  // 2. ĐUA VỊT (giữ nguyên bản cũ)
+  // ============================================================
+  (function() {
+    const cfg = {
+      trackId: 'duckTrack',
+      winnerId: 'duckWinner',
+      startBtnId: 'startDuckRace',
+      resetBtnId: 'resetDuckRace',
+      symbol: '🦆',
+      emoji: '🦆'
+    };
+    const state = { runners: [], animationIds: [], isRunning: false, winner: null };
+
+    function buildTrack() {
+      const trackEl = document.getElementById(cfg.trackId);
+      if (!trackEl) return;
+      const names = getNames();
+
+      state.animationIds.forEach(id => cancelAnimationFrame(id));
+      state.animationIds = [];
+      state.isRunning = false;
+      state.winner = null;
+      state.runners = [];
+
+      const winnerEl = document.getElementById(cfg.winnerId);
+      if (winnerEl) { winnerEl.classList.remove('show'); winnerEl.textContent = ''; }
+      const startBtn = document.getElementById(cfg.startBtnId);
+      if (startBtn) startBtn.disabled = false;
+
+      if (names.length === 0) {
+        trackEl.innerHTML = '<div style="text-align:center;padding:24px;color:#7e8b9c;font-size:0.9rem;">Nhập danh sách tên ở trên để bắt đầu đua</div>';
+        return;
+      }
+
+      let html = '';
+      names.forEach((name, idx) => {
+        html += `
+          <div class="lane" data-lane="${idx}" data-name="${name.replace(/"/g, '&quot;')}">
+            <div class="lane-label" title="${name}">${name}</div>
+            <div class="lane-track">
+              <span class="runner duck-symbol" style="left:2%;">${cfg.symbol}</span>
+              <span class="finish-flag"></span>
+            </div>
+          </div>
+        `;
+      });
+      trackEl.innerHTML = html;
+
+      const lanes = trackEl.querySelectorAll('.lane');
+      state.runners = Array.from(lanes).map(lane => ({
+        laneEl: lane,
+        runnerEl: lane.querySelector('.runner'),
+        name: lane.dataset.name,
+        progress: 0, speed: 0, finished: false
+      }));
+    }
+
+    function startRace() {
+      const names = getNames();
+      if (state.runners.length !== names.length || state.runners.some((r, i) => r.name !== names[i])) {
+        buildTrack();
+      }
+      if (state.runners.length === 0) { alert('Vui lòng nhập danh sách tên học sinh!'); return; }
+      if (state.isRunning) return;
+
+      state.isRunning = true;
+      state.winner = null;
+      const winnerEl = document.getElementById(cfg.winnerId);
+      if (winnerEl) { winnerEl.classList.remove('show'); winnerEl.textContent = ''; }
+
+      state.runners.forEach(r => {
+        r.progress = 0; r.finished = false;
+        r.speed = 0.15 + Math.random() * 0.25;
+        r.laneEl.classList.remove('finished');
+        r.runnerEl.style.left = '2%';
+      });
+
+      const startBtn = document.getElementById(cfg.startBtnId);
+      if (startBtn) startBtn.disabled = true;
+
+      function animate() {
+        if (!state.isRunning) return;
+        let allFinished = true;
+        state.runners.forEach(r => {
+          if (r.finished) return;
+          allFinished = false;
+          r.speed += (Math.random() - 0.45) * 0.04;
+          r.speed = Math.max(0.08, Math.min(0.9, r.speed));
+          r.progress = Math.min(100, r.progress + r.speed);
+          r.runnerEl.style.left = (2 + (r.progress / 100) * 96) + '%';
+
+          if (r.progress >= 100 && !r.finished) {
+            r.finished = true;
+            r.laneEl.classList.add('finished');
+            if (!state.winner) {
+              state.winner = r.name;
+              if (winnerEl) {
+                winnerEl.textContent = `🏆 ${cfg.emoji} ${r.name} về nhất!`;
+                winnerEl.classList.add('show');
+              }
+              calledSet.add(r.name);
+              updateStats();
+            }
+          }
+        });
+        if (allFinished) {
+          state.isRunning = false;
+          if (startBtn) startBtn.disabled = false;
+          return;
+        }
+        state.animationIds[0] = requestAnimationFrame(animate);
+      }
+      state.animationIds[0] = requestAnimationFrame(animate);
+    }
+
+    function resetRace() {
+      state.animationIds.forEach(id => cancelAnimationFrame(id));
+      state.animationIds = [];
+      state.isRunning = false;
+      buildTrack();
+    }
+
+    document.getElementById(cfg.startBtnId)?.addEventListener('click', startRace);
+    document.getElementById(cfg.resetBtnId)?.addEventListener('click', resetRace);
+    buildTrack();
+
+    window.__rebuildDuck = buildTrack;
+    window.__resetDuck = resetRace;
+  })();
+
+  // ============================================================
+  // 3. ĐUA BI (DỌC + CHƯỚNG NGẠI VẬT) - canvas
+  // ============================================================
+  (function() {
+    const canvas = document.getElementById('ballCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const arena = canvas.parentElement;
+
+    // Cấu hình
+    const CONFIG = {
+      ballRadius: 10,
+      ballColors: ['#2563eb','#7c3aed','#db2777','#ea580c','#0d9488','#ca8a04','#4f46e5','#be123c','#15803d','#b45309'],
+      obstacleColor: '#94a3b8',
+      obstacleBorder: '#64748b',
+      finishColor: '#22c55e',
+      finishLineHeight: 24,
+      startY: 30,
+      gravity: 0.06,
+      maxSpeed: 2.6,
+      horizontalRange: 60, // biên độ ngang
+      obstacleInterval: 110, // khoảng cách dọc giữa các chướng ngại
+      obstacleMinW: 60,
+      obstacleMaxW: 140,
+      obstacleH: 14,
+      pathWidth: 420,
+      respawnChance: 0.08
+    };
+
+    let state = {
+      balls: [],
+      obstacles: [],
+      isRunning: false,
+      winner: null,
+      animationId: null,
+      startTime: 0,
+      canvasW: 0,
+      canvasH: 0,
+      dpr: window.devicePixelRatio || 1,
+      finishY: 0,
+      names: []
+    };
+
+    function resizeCanvas() {
+      const rect = arena.getBoundingClientRect();
+      const w = Math.max(rect.width, 320);
+      const h = Math.max(rect.height, 300);
+      state.canvasW = w;
+      state.canvasH = h;
+      canvas.width = w * state.dpr;
+      canvas.height = h * state.dpr;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+      state.finishY = h - 60;
+      draw();
+    }
+
+    function resetState() {
+      if (state.animationId) { cancelAnimationFrame(state.animationId); state.animationId = null; }
+      state.isRunning = false;
+      state.winner = null;
+      state.balls = [];
+      state.obstacles = [];
+      const winnerEl = document.getElementById('ballWinner');
+      if (winnerEl) { winnerEl.classList.remove('show'); winnerEl.textContent = ''; }
+      const startBtn = document.getElementById('startBallRace');
+      if (startBtn) startBtn.disabled = false;
+      state.names = getNames();
+      buildObstacles();
+      buildBalls();
+      draw();
+    }
+
+    function buildObstacles() {
+      const w = state.canvasW;
+      const h = state.canvasH;
+      const pathLeft = (w - CONFIG.pathWidth) / 2;
+      const pathRight = pathLeft + CONFIG.pathWidth;
+      const obs = [];
+      // Từ dưới đích lên trên đầu (cách startY 60px)
+      for (let y = state.finishY - 80; y > CONFIG.startY + 40; y -= CONFIG.obstacleInterval) {
+        // Mỗi hàng có 1-2 chướng ngại
+        const count = Math.random() < 0.4 ? 2 : 1;
+        const usedRanges = [];
+        for (let i = 0; i < count; i++) {
+          const obsW = CONFIG.obstacleMinW + Math.random() * (CONFIG.obstacleMaxW - CONFIG.obstacleMinW);
+          // Chọn vị trí ngẫu nhiên trong path, tránh chồng lấn
+          let tries = 0;
+          let left, ok = false;
+          while (tries < 20 && !ok) {
+            left = pathLeft + 10 + Math.random() * (CONFIG.pathWidth - obsW - 20);
+            ok = true;
+            for (const r of usedRanges) {
+              if (!(left + obsW < r.left - 6 || left > r.left + r.w + 6)) { ok = false; break; }
+            }
+            tries++;
+          }
+          if (!ok) continue;
+          usedRanges.push({ left, w: obsW });
+          obs.push({
+            x: left, y: y - CONFIG.obstacleH / 2,
+            w: obsW, h: CONFIG.obstacleH,
+            color: CONFIG.obstacleColor
+          });
+        }
+      }
+      state.obstacles = obs;
+    }
+
+    function buildBalls() {
+      const names = state.names;
+      const w = state.canvasW;
+      const pathLeft = (w - CONFIG.pathWidth) / 2;
+      const ballRadius = CONFIG.ballRadius;
+      const balls = [];
+      const count = names.length;
+      // Xếp các bi theo hàng ngang, nếu nhiều quá thì chia nhiều hàng
+      const maxPerRow = Math.max(1, Math.floor(CONFIG.pathWidth / (ballRadius * 2.6)));
+      const rows = Math.ceil(count / maxPerRow);
+      const rowSpacing = Math.max(ballRadius * 2.4, 22);
+
+      for (let i = 0; i < count; i++) {
+        const row = Math.floor(i / maxPerRow);
+        const col = i % maxPerRow;
+        const rowCount = Math.min(maxPerRow, count - row * maxPerRow);
+        const totalWidth = rowCount * ballRadius * 2.4;
+        const startX = pathLeft + (CONFIG.pathWidth - totalWidth) / 2 + ballRadius * 1.2;
+        const x = startX + col * ballRadius * 2.4;
+        const y = CONFIG.startY + row * rowSpacing + (row % 2 === 0 ? 0 : 4);
+
+        balls.push({
+          name: names[i],
+          color: CONFIG.ballColors[i % CONFIG.ballColors.length],
+          x, y,
+          baseX: x,
+          vy: 0,
+          vx: 0,
+          radius: ballRadius,
+          finished: false,
+          phase: Math.random() * Math.PI * 2,
+          phaseSpeed: 0.02 + Math.random() * 0.03,
+          alive: true
+        });
+      }
+      state.balls = balls;
+    }
+
+    function draw() {
+      const w = state.canvasW;
+      const h = state.canvasH;
+      ctx.clearRect(0, 0, w, h);
+
+      // Đường đua
+      const pathLeft = (w - CONFIG.pathWidth) / 2;
+      const pathRight = pathLeft + CONFIG.pathWidth;
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillRect(pathLeft, 0, CONFIG.pathWidth, h);
+
+      // Vạch đích
+      const fy = state.finishY;
+      ctx.fillStyle = CONFIG.finishColor;
+      ctx.fillRect(pathLeft, fy, CONFIG.pathWidth, CONFIG.finishLineHeight);
+      // Sọc caro
+      ctx.fillStyle = '#fff';
+      for (let x = pathLeft; x < pathRight; x += 16) {
+        for (let r = 0; r < 2; r++) {
+          if ((Math.floor((x - pathLeft) / 16) + r) % 2 === 0) {
+            ctx.fillRect(x, fy + r * (CONFIG.finishLineHeight / 2), 16, CONFIG.finishLineHeight / 2);
+          }
+        }
+      }
+      // Chữ FINISH
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('🏁 ĐÍCH', w / 2, fy - 6);
+
+      // Vạch xuất phát
+      ctx.fillStyle = 'rgba(30,75,138,0.15)';
+      ctx.fillRect(pathLeft, CONFIG.startY - 14, CONFIG.pathWidth, 3);
+
+      // Chướng ngại vật
+      state.obstacles.forEach(o => {
+        ctx.fillStyle = o.color;
+        ctx.strokeStyle = CONFIG.obstacleBorder;
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, o.x, o.y, o.w, o.h, 5);
+        ctx.fill();
+        ctx.stroke();
+      });
+
+      // Các viên bi
+      state.balls.forEach(b => {
+        if (!b.alive) return;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        const grad = ctx.createRadialGradient(b.x - 3, b.y - 3, 1, b.x, b.y, b.radius);
+        grad.addColorStop(0, lighten(b.color, 0.4));
+        grad.addColorStop(1, b.color);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Nhãn tên (chỉ khi không quá đông)
+        if (state.names.length <= 12) {
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 10px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText(b.name, b.x, b.y - b.radius - 4);
+        }
+      });
+
+      // Nếu chưa có bi
+      if (state.names.length === 0) {
+        ctx.fillStyle = '#7e8b9c';
+        ctx.font = '14px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('Nhập danh sách tên để bắt đầu đua', w / 2, h / 2);
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function lighten(hex, amt) {
+      const c = hex.replace('#','');
+      const r = parseInt(c.substring(0,2),16);
+      const g = parseInt(c.substring(2,4),16);
+      const b = parseInt(c.substring(4,6),16);
+      const nr = Math.min(255, Math.round(r + (255-r)*amt));
+      const ng = Math.min(255, Math.round(g + (255-g)*amt));
+      const nb = Math.min(255, Math.round(b + (255-b)*amt));
+      return `rgb(${nr},${ng},${nb})`;
+    }
+
+    function startRace() {
+      const names = getNames();
+      if (names.length === 0) { alert('Vui lòng nhập danh sách tên học sinh!'); return; }
+
+      // Nếu danh sách thay đổi, rebuild
+      if (state.names.length !== names.length || state.names.some((n, i) => n !== names[i])) {
+        resetState();
+      }
+      if (state.isRunning) return;
+
+      state.isRunning = true;
+      state.winner = null;
+      const winnerEl = document.getElementById('ballWinner');
+      if (winnerEl) { winnerEl.classList.remove('show'); winnerEl.textContent = ''; }
+      const startBtn = document.getElementById('startBallRace');
+      if (startBtn) startBtn.disabled = true;
+
+      // Reset vị trí bi về đầu
+      state.balls.forEach(b => {
+        b.y = CONFIG.startY;
+        b.vy = 0.3 + Math.random() * 0.3;
+        b.vx = 0;
+        b.finished = false;
+        b.alive = true;
+      });
+
+      let lastTime = performance.now();
+      let frameCount = 0;
+
+      function loop(now) {
+        if (!state.isRunning) return;
+        const dt = Math.min(32, now - lastTime) / 16.67; // chuẩn hóa về ~60fps
+        lastTime = now;
+        frameCount++;
+
+        const fy = state.finishY;
+
+        state.balls.forEach(b => {
+          if (b.finished || !b.alive) return;
+
+          // Tăng tốc rơi
+          b.vy += CONFIG.gravity * dt;
+          b.vy = Math.min(b.vy, CONFIG.maxSpeed);
+          b.y += b.vy * dt;
+
+          // Di chuyển ngang ngẫu nhiên (lắc lư)
+          b.phase += b.phaseSpeed * dt;
+          b.vx += (Math.sin(b.phase) * 0.6) * dt * 0.1;
+          b.vx *= 0.96;
+          b.x += b.vx * dt;
+
+          // Giới hạn trong đường đua
+          const pathLeft = (state.canvasW - CONFIG.pathWidth) / 2 + b.radius + 2;
+          const pathRight = pathLeft + CONFIG.pathWidth - b.radius * 2 - 4;
+          if (b.x < pathLeft) { b.x = pathLeft; b.vx = Math.abs(b.vx) * 0.5; }
+          if (b.x > pathRight) { b.x = pathRight; b.vx = -Math.abs(b.vx) * 0.5; }
+
+          // Va chạm với chướng ngại vật
+          state.obstacles.forEach(o => {
+            // Kiểm tra va chạm hình tròn - hình chữ nhật
+            const closestX = Math.max(o.x, Math.min(b.x, o.x + o.w));
+            const closestY = Math.max(o.y, Math.min(b.y, o.y + o.h));
+            const dx = b.x - closestX;
+            const dy = b.y - closestY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < b.radius) {
+              // Nảy ra: chủ yếu đẩy lên trên và sang bên
+              const overlap = b.radius - dist;
+              if (dist > 0) {
+                const nx = dx / dist;
+                const ny = dy / dist;
+                b.x += nx * overlap;
+                b.y += ny * overlap;
+                // Nảy
+                b.vy = -Math.abs(b.vy) * 0.3 + 0.2;
+                b.vx += nx * 0.5;
+              } else {
+                // Nếu tâm trùng, đẩy lên trên
+                b.y = o.y - b.radius - 1;
+                b.vy = -0.3;
+              }
+              // Nếu bị kẹt quá lâu, có thể hồi sinh
+            }
+          });
+
+          // Kiểm tra về đích
+          if (b.y >= fy && !b.finished) {
+            b.finished = true;
+            b.y = fy;
+            if (!state.winner) {
+              state.winner = b.name;
+              if (winnerEl) {
+                winnerEl.textContent = `🏆 🔵 ${b.name} về nhất!`;
+                winnerEl.classList.add('show');
+              }
+              calledSet.add(b.name);
+              updateStats();
+            }
+          }
+        });
+
+        // Nếu tất cả về đích hoặc không còn bi sống, dừng
+        const allFinished = state.balls.every(b => b.finished);
+        if (allFinished) {
+          state.isRunning = false;
+          if (startBtn) startBtn.disabled = false;
+        } else {
+          state.animationId = requestAnimationFrame(loop);
+        }
+
+        draw();
+      }
+
+      state.animationId = requestAnimationFrame(loop);
+    }
+
+    // Khởi tạo
+    resizeCanvas();
+    // Vẽ lại khi resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        resizeCanvas();
+        resetState();
+      }, 200);
+    });
+
+    // Khi chuyển tab, vẽ lại
+    window.__drawBallCanvas = () => {
+      resizeCanvas();
+      draw();
+    };
+
+    // Gắn nút
+    document.getElementById('startBallRace')?.addEventListener('click', startRace);
+    document.getElementById('resetBallRace')?.addEventListener('click', resetState);
+
+    // Build ban đầu
+    resetState();
+
+    window.__rebuildBall = () => {
+      resetState();
+    };
+    window.__resetBall = resetState;
+  })();
+
+  // ============================================================
+  // QUẢN LÝ LỚP · RỒNG NGỦ
+  // ============================================================
+  (function() {
+    const startBtn = document.getElementById('startMicBtn');
+    const stopBtn = document.getElementById('stopMicBtn');
+    const micStatus = document.getElementById('micStatusBadge');
+    const volumeBar = document.getElementById('volumeBar');
+    const thresholdSlider = document.getElementById('thresholdSlider');
+    const thresholdValue = document.getElementById('thresholdValue');
+    const dragonEmoji = document.getElementById('dragonEmoji');
+    const alertCountSpan = document.getElementById('alertCount');
+    const resetAlertBtn = document.getElementById('resetAlertBtn');
+
+    if (!startBtn) return;
+
+    let audioContext = null, analyser = null, microphone = null, stream = null;
+    let animationId = null, isListening = false, alertCount = 0;
+    let isAwake = false, wakeTimeout = null;
+
+    thresholdSlider.addEventListener('input', (e) => {
+      thresholdValue.textContent = e.target.value + '%';
+    });
+
+    resetAlertBtn.addEventListener('click', () => {
+      alertCount = 0;
+      alertCountSpan.textContent = '0';
+    });
+
+    function stopMicrophone() {
+      if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
+      if (microphone) { try { microphone.disconnect(); } catch(e){} microphone = null; }
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+      if (audioContext) { audioContext.close().catch(()=>{}); audioContext = null; }
+      analyser = null;
+      isListening = false;
+      if (startBtn) startBtn.disabled = false;
+      if (stopBtn) stopBtn.disabled = true;
+      if (micStatus) { micStatus.textContent = 'Chưa bật mic'; micStatus.classList.remove('active'); }
+      if (volumeBar) { volumeBar.style.width = '0%'; volumeBar.classList.remove('danger'); }
+      if (dragonEmoji) { dragonEmoji.textContent = '🐉💤'; dragonEmoji.classList.remove('awake'); }
+      if (wakeTimeout) { clearTimeout(wakeTimeout); wakeTimeout = null; }
+      isAwake = false;
+    }
+
+    window.__stopMicIfActive = stopMicrophone;
+
+    async function startMicrophone() {
+      if (isListening) return;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+
+        isListening = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        micStatus.textContent = 'Đang lắng nghe...';
+        micStatus.classList.add('active');
+
+        const dataArray = new Uint8Array(analyser.fftSize);
+
+        function updateVolume() {
+          if (!isListening || !analyser) return;
+          analyser.getByteTimeDomainData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            const v = (dataArray[i] - 128) / 128;
+            sum += v * v;
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          const percent = Math.min(100, Math.round(rms * 250));
+          volumeBar.style.width = percent + '%';
+
+          const threshold = parseInt(thresholdSlider.value, 10);
+          if (percent >= threshold) {
+            volumeBar.classList.add('danger');
+            if (!isAwake) {
+              isAwake = true;
+              dragonEmoji.textContent = '🐉🔥';
+              dragonEmoji.classList.add('awake');
+              alertCount++;
+              alertCountSpan.textContent = alertCount;
+            }
+            if (wakeTimeout) clearTimeout(wakeTimeout);
+            wakeTimeout = setTimeout(() => {
+              isAwake = false;
+              dragonEmoji.textContent = '🐉💤';
+              dragonEmoji.classList.remove('awake');
+              volumeBar.classList.remove('danger');
+            }, 600);
+          }
+          animationId = requestAnimationFrame(updateVolume);
+        }
+        updateVolume();
+      } catch (err) {
+        console.error('Lỗi microphone:', err);
+        alert('Không thể truy cập microphone. Vui lòng kiểm tra quyền trình duyệt.');
+        stopMicrophone();
+      }
+    }
+
+    startBtn.addEventListener('click', startMicrophone);
+    stopBtn.addEventListener('click', stopMicrophone);
+    window.addEventListener('beforeunload', () => { if (isListening) stopMicrophone(); });
+  })();
+</script>
+</body>
+</html>
